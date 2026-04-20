@@ -12,7 +12,6 @@ html {
 body {
   background-color: #121212;
   color: #e0e0e0;
-  padding-bottom: 80px;
 }
 
 header {
@@ -38,14 +37,66 @@ nav a {
   text-transform: uppercase;
 }
 
-.intro {
-  text-align: center;
-  padding: 50px 20px;
+.nav-login {
+  background-color: #333;
+  padding: 8px 15px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
 }
 
-.intro h1 {
-  font-size: 32px;
+.nav-login:hover {
+  background-color: #00e054;
+  color: #121212;
+}
+
+.hero {
+  min-height: calc(100vh - 76px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin-bottom: 50px;
+  background-image:
+    linear-gradient(to bottom, rgba(18, 18, 18, 0.4), #121212),
+    url("img/pragmata.jpg");
+  background-size: cover;
+  background-position: center top;
+}
+
+.hero-content h1 {
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: #fff;
+  text-transform: uppercase;
   margin-bottom: 10px;
+  text-shadow: 0 4px 15px rgba(0, 0, 0, 0.9);
+}
+
+.hero-content p {
+  font-size: 1.2rem;
+  color: #e0e0e0;
+  margin-bottom: 30px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
+}
+
+.btn-cta {
+  background-color: #00e054;
+  color: #121212;
+  padding: 15px 35px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.1rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  display: inline-block;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.btn-cta:hover {
+  transform: translateY(-3px);
+  background-color: #00e054;
 }
 
 .container {
@@ -196,4 +247,14 @@ button {
 .btn-edit:hover,
 .btn-delete:hover {
   opacity: 0.8;
+}
+
+footer {
+  background-color: #1a1a1a;
+  color: #666;
+  text-align: center;
+  padding: 30px 20px;
+  border-top: 1px solid #333;
+  margin-top: 50px;
+  font-size: 0.9rem;
 }
