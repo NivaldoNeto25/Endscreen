@@ -1,15 +1,39 @@
 .hero {
-  min-height: calc(100vh - 76px);
+  position: relative;
+  min-height: 100vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  margin-bottom: 50px;
+  overflow: visible;
   background-image:
     linear-gradient(to bottom, rgba(18, 18, 18, 0.4), #121212),
     url("../img/pragmata.jpg");
   background-size: cover;
   background-position: center top;
+  margin-bottom: 250px;
+}
+
+.hero-content {
+  z-index: 5;
+}
+
+.hero-trending {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  transform: translateY(170px);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.hero-trending h3 {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  margin-bottom: 20px;
 }
 
 .hero-content h1 {
@@ -26,6 +50,15 @@
   color: #e0e0e0;
   margin-bottom: 30px;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
+}
+
+/* Container dos posters */
+.hero-posters {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap; /* Permite quebrar linha em telas menores */
+  pointer-events: auto;
 }
 
 .btn-cta {
@@ -46,4 +79,104 @@
 .btn-cta:hover {
   transform: translateY(-3px);
   background-color: #00e054;
+}
+
+/* A caixa individual de cada poster */
+.poster-box {
+  position: relative;
+  width: 120px; /* Largura do poster */
+  aspect-ratio: 2 / 3; /* Mantém a proporção clássica de capa de jogo/filme */
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.poster-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Overlay Escuro com Curtidas e Visualizações */
+.poster-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8); /* Fundo preto semi-transparente */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  opacity: 0; /* Escondido por padrão */
+  transition: opacity 0.2s ease;
+  color: #fff;
+  font-weight: bold;
+  font-size: 0.85rem;
+}
+
+/* Efeito Hover na Caixa */
+.poster-box:hover {
+  transform: translateY(-5px) scale(1.05); /* Sobe e cresce levemente */
+  border-color: #00e054; /* Borda verde característica do seu layout */
+}
+
+.poster-box:hover .poster-overlay {
+  opacity: 1; /* Mostra os dados ao passar o mouse */
+}
+
+/* Balão flutuante (Tooltip) - Estilo Letterboxd */
+.poster-box::after {
+  content: attr(data-name); /* Puxa o texto do HTML dinamicamente */
+  position: absolute;
+  bottom: 105%; /* Posiciona acima da imagem */
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background-color: #444; /* Cor do balão */
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: bold;
+  white-space: nowrap; /* Impede que o texto quebre em duas linhas */
+  opacity: 0;
+  pointer-events: none; /* Impede que o balão interfira no clique */
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+  z-index: 10;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Setinha do balão apontando para baixo */
+.poster-box::before {
+  content: "";
+  position: absolute;
+  bottom: 101%;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  border-width: 6px;
+  border-style: solid;
+  border-color: #444 transparent transparent transparent;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+  z-index: 10;
+}
+
+/* Revelando o balão no Hover */
+.poster-box:hover::after,
+.poster-box:hover::before {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0); /* Animação suave deslizando para cima */
 }

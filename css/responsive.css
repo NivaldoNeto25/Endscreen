@@ -1,0 +1,98 @@
+@media screen and (max-width: 992px) {
+  .games-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (max-width: 768px) {
+  header {
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px;
+  }
+
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+  }
+
+  nav a {
+    margin-left: 0;
+    font-size: 13px;
+  }
+
+  .nav-login {
+    height: auto;
+    padding: 6px 12px;
+  }
+
+  .hero-content h1 {
+    font-size: 2.2rem;
+  }
+
+  .hero-content p {
+    font-size: 1rem;
+    padding: 0 15px;
+  }
+
+  .hero-trending {
+    transform: translateY(100px);
+  }
+
+  .poster-box {
+    width: 90px;
+  }
+
+  .poster-box::after,
+  .poster-box::before {
+    display: none;
+  }
+
+  .modal-content {
+    padding: 20px 15px;
+    width: 95%;
+  }
+
+  .close-btn {
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .games-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .game-card {
+    padding: 15px;
+  }
+}
+
+@media screen and (max-width: 615px) {
+  .hero-content {
+    margin-bottom: 160px;
+  }
+
+  .hero-content h1 {
+    font-size: 1.8rem;
+  }
+
+  .hero-content p {
+    font-size: 0.9rem;
+  }
+
+  .hero-posters {
+    gap: 8px;
+  }
+
+  .poster-box {
+    width: 70px;
+  }
+}
