@@ -29,10 +29,18 @@ function registerUser(nome, email, senha) {
     if (emailExists) {
         return { success: false, message: 'Este e-mail já está em uso!' };
     }
-    const newUser = { id: Date.now(), nome: nome, email: email, senha: senha };
+
+    const newUser = { 
+        id: Date.now(), 
+        nome: nome, 
+        email: email, 
+        senha: senha 
+    };
+
     users.push(newUser);
     currentUser = newUser;
     saveToLocalStorage();
+    
     return { success: true, user: currentUser };
 }
 
