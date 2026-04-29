@@ -1,90 +1,86 @@
+// crud.js
+const API_URL = 'http://127.0.0.1:5000';
 
-let myGames = JSON.parse(localStorage.getItem('myGames')) || [];
-let users = JSON.parse(localStorage.getItem('users')) || [];
-let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
-
-function saveToLocalStorage() {
-    localStorage.setItem('myGames', JSON.stringify(myGames));
-    localStorage.setItem('users', JSON.stringify(users));
-    localStorage.setItem('currentUser', JSON.stringify(currentUser));
-}
-
+// ==========================================
+// SESSÃO DO USUÁRIO (Continua no LocalStorage para não deslogar no F5)
+// ==========================================
+let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null; 
 
 function getCurrentUser() {
     return currentUser;
 }
 
-function loginUser(email, senha) {
-    const userFound = users.find(u => u.email === email && u.senha === senha);
-    if (userFound) {
-        currentUser = userFound;
-        saveToLocalStorage();
-        return { success: true, user: currentUser };
-    }
-    return { success: false, message: 'E-mail ou senha incorretos.' };
-}
-
-function registerUser(nome, email, senha) {
-    const emailExists = users.find(u => u.email === email);
-    if (emailExists) {
-        return { success: false, message: 'Este e-mail já está em uso!' };
-    }
-
-    const newUser = { 
-        id: Date.now(), 
-        nome: nome, 
-        email: email, 
-        senha: senha 
-    };
-
-    users.push(newUser);
-    currentUser = newUser;
-    saveToLocalStorage();
-    
-    return { success: true, user: currentUser };
-}
-
 function logoutUser() {
     currentUser = null;
-    saveToLocalStorage();
+    localStorage.removeItem('currentUser');
 }
 
+function syncRequest(method, endpoint, body = null) {
+    const xhr = new XMLHttpRequest();
+    xhr.open(method, `${API_URL}${endpoint}`, false); 
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    
+    try {
+        xhr.send(body ? JSON.stringify(body) : null);
+        return JSON.parse(xhr.responseText);
+    } catch (e) {
+        console.error("Erro de conexão com o servidor Python:", e);
+        return null;
+    }
+}
+
+function loginUser(email, password) {
+    const data = syncRequest('POST', '/login', { email: email, senha: password });
+    
+    if (data && data.success) {
+        currentUser = data.user; 
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    }
+    return data || { success: false, message: "Erro ao conectar com o servidor." };
+}
+
+function registerUser(name, email, password) {
+    const data = syncRequest('POST', '/registrar', { nome: name, email: email, senha: password });
+    
+    if (data && data.success) {
+        currentUser = data.user; 
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    }
+    return data || { success: false, message: "Erro ao conectar com o servidor." };
+}
 
 function createGame(gameData) {
-    const newGame = {
-        id: Date.now(),
-        userId: currentUser.id,
-        userName: currentUser.nome,
-        ...gameData
-    };
-    myGames.push(newGame);
-    saveToLocalStorage();
+    const user = getCurrentUser();
+    if (!user) return;
+    
+    const payload = { ...gameData, userId: user.id, userName: user.nome };
+    syncRequest('POST', '/jogos', payload);
 }
 
 function updateGame(id, gameData) {
-    const gameIndex = myGames.findIndex(game => game.id === id);
-    if (gameIndex !== -1) {
-        myGames[gameIndex] = { ...myGames[gameIndex], ...gameData };
-        saveToLocalStorage();
-    }
+    syncRequest('PUT', `/jogos/${id}`, gameData);
 }
 
 function deleteGameData(id) {
-    myGames = myGames.filter(game => game.id !== id);
-    saveToLocalStorage();
-}
-
-function getGameById(id) {
-    return myGames.find(game => game.id === id);
+    syncRequest('DELETE', `/jogos/${id}`);
 }
 
 function getUserGames() {
-    if (!currentUser) return [];
-    return myGames.filter(game => game.userId === currentUser.id);
+    const user = getCurrentUser();
+    if (!user) return [];
+    
+    const games = syncRequest('GET', `/jogos/usuario/${user.id}`);
+    return games || [];
 }
 
 function getAllReviews() {
-    return myGames
-        .filter(game => game.review && game.review.trim() !== "")
-        .reverse();
+    const allGames = syncRequest('GET', '/jogos');
+    if (!allGames) return [];
+    
+    return allGames.filter(game => game.review && game.review.trim() !== "").reverse();
+}
+
+function getGameById(id) {
+    const games = getUserGames();
+    return games.find(game => game.id === id);
 }
