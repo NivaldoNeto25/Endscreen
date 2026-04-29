@@ -27,14 +27,14 @@ authToggle.addEventListener("click", () => {
   }
 });
 
-authForm.addEventListener("submit", (e) => {
+authForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const email = document.getElementById("auth-email").value;
   const senha = document.getElementById("auth-senha").value;
   const nome = document.getElementById("auth-nome").value;
 
   if (isLoginMode) {
-    const result = loginUser(email, senha);
+    const result = await loginUser(email, senha);
     if (result.success) {
       alert(`Bem-vindo de volta, ${result.user.nome}!`);
       closeModal("modal-login");
@@ -43,7 +43,7 @@ authForm.addEventListener("submit", (e) => {
       alert(result.message);
     }
   } else {
-    const result = registerUser(nome, email, senha);
+    const result = await registerUser(nome, email, senha);
     if (result.success) {
       alert("Conta criada com sucesso!");
       closeModal("modal-login");
@@ -72,7 +72,7 @@ function updateHeader() {
   }
 }
 
-formElement.addEventListener("submit", function (event) {
+formElement.addEventListener("submit", async function (event) {
   event.preventDefault();
 
   const gameData = {
@@ -84,10 +84,10 @@ formElement.addEventListener("submit", function (event) {
   };
 
   if (currentEditId !== null) {
-    updateGame(currentEditId, gameData);
+    await updateGame(currentEditId, gameData);
     currentEditId = null;
   } else {
-    createGame(gameData);
+    await createGame(gameData);
   }
 
   formElement.reset();
@@ -95,7 +95,7 @@ formElement.addEventListener("submit", function (event) {
   refreshUI();
 });
 
-function renderGames() {
+async function renderGames() {
   cardsContainer.innerHTML = "";
   const user = getCurrentUser();
 
@@ -109,7 +109,7 @@ function renderGames() {
   submitButton.innerText =
     currentEditId !== null ? "Salvar Alterações" : "Salvar Jogo";
 
-  const userGames = getUserGames();
+  const userGames = await getUserGames();
 
   if (userGames.length === 0) {
     cardsContainer.innerHTML =
@@ -135,13 +135,13 @@ function renderGames() {
   });
 }
 
-window.handleDeleteGame = function (gameId) {
-  deleteGameData(gameId);
+window.handleDeleteGame = async function (gameId) {
+  await deleteGameData(gameId);
   refreshUI();
 };
 
-window.prepareEditGame = function (gameId) {
-  const gameToEdit = getGameById(gameId);
+window.prepareEditGame = async function (gameId) {
+  const gameToEdit = await getGameById(gameId);
   if (gameToEdit) {
     currentEditId = gameId;
     document.getElementById("modal-title").innerText = "Editar Jogo";
@@ -157,13 +157,13 @@ window.prepareEditGame = function (gameId) {
   }
 };
 
-function renderReviews() {
+async function renderReviews() {
   const reviewsContainer = document.getElementById("reviews-list");
   if (!reviewsContainer) return;
 
   reviewsContainer.innerHTML = "";
 
-  const todasReviews = getAllReviews();
+  const todasReviews = await getAllReviews();
   if (todasReviews.length === 0) {
     reviewsContainer.innerHTML =
       '<p class="empty-message">Nenhuma review registrada ainda. Jogue algo e conte para nós!</p>';
@@ -233,10 +233,10 @@ function openNewGameForm() {
   openModal("modal-cadastro");
 }
 
-function refreshUI() {
+async function refreshUI() {
   updateHeader();
-  renderGames();
-  renderReviews();
+  await renderGames();
+  await renderReviews();
 }
 
 refreshUI();
@@ -246,7 +246,6 @@ const heroBackgrounds = [
   "linear-gradient(to bottom, rgba(18, 18, 18, 0.4), #121212), url('img/background/eldenring.jpeg')",
   "linear-gradient(to bottom, rgba(18, 18, 18, 0.4), #121212), url('img/background/sekiro.jpg')",
   "linear-gradient(to bottom, rgba(18, 18, 18, 0.4), #121212), url('img/background/tlou.jpg')",
-
   "linear-gradient(to bottom, rgba(18, 18, 18, 0.4), #121212), url('img/background/cyberpunk.jpg')",
   "linear-gradient(to bottom, rgba(18, 18, 18, 0.4), #121212), url('img/background/bf1.png')",
   "linear-gradient(to bottom, rgba(18, 18, 18, 0.4), #121212), url('img/background/destiny2.jpg')",
