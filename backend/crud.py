@@ -26,23 +26,19 @@ def salvar_dados(arquivo, dados):
 
 @app.route('/')
 def index():
-    # Envia o arquivo index.html que está na raiz do projeto
     return send_from_directory(app.static_folder, 'index.html')
 
-# ==========================================
-# ROTAS DE AUTENTICAÇÃO
-# ==========================================
+
 @app.route('/registrar', methods=['POST'])
 def registrar():
     dados = request.json
     usuarios = carregar_dados(ARQUIVO_USERS)
     
-    # Verifica se o e-mail já existe
     for u in usuarios:
         if u.get('email') == dados.get('email'):
             return jsonify({"success": False, "message": "Este e-mail já está em uso!"})
             
-    # Cria a nova conta
+   
     novo_usuario = {
         "id": int(time.time() * 1000),
         "nome": dados.get('nome'),
@@ -65,9 +61,7 @@ def login():
             
     return jsonify({"success": False, "message": "E-mail ou senha incorretos."})
 
-# ==========================================
-# ROTAS DE JOGOS (CRUD)
-# ==========================================
+
 @app.route('/jogos', methods=['GET'])
 def listar_todos_jogos():
     jogos = carregar_dados(ARQUIVO_JOGOS)
