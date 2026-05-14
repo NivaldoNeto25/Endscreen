@@ -158,6 +158,3 @@ def deletar_jogo(jogo_id):
         return jsonify({"success": True, "message": "Jogo deletado!"})
     
     return jsonify({"success": False, "message": "Jogo não encontrado."})
-
-if __name__ == "__main__":
-    app.run(debug=True)
