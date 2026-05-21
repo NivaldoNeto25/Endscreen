@@ -3,7 +3,7 @@ from sqlalchemy.orm import *
 
 Base = declarative_base()
 
-engine = create_engine('sqlite:///endscreen.db')
+engine = create_engine('sqlite:///endscreen.db', echo=True)
 
 Session = sessionmaker(bind=engine)
 session = Session()
@@ -25,7 +25,7 @@ class Jogo(Base):
     rating = Column(String)
     hours = Column(String)
     review = Column(String)
-    user_id = Column(Integer)
+    user_id = Column(Integer, ForeignKey('usuarios.id'))
     userName = Column(String)
 
 Base.metadata.create_all(engine)

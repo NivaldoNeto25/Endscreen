@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import os
 
-from backend.db import atualizarJogo, criarUsuario, deletarJogo, encontrarJogoPorId, listarJogosDoUsuario, listarTodosJogos, loginUsuario, usuarioExiste
+from db import adicionarJogo, atualizarJogo, criarUsuario, deletarJogo, listarJogosDoUsuario, listarTodosJogos, loginUsuario, usuarioExiste
 
 PASTA_PROJETO = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
@@ -42,7 +42,7 @@ def login():
 def adicionar_jogo():
     data = request.json
     
-    novo_jogo = adicionar_jogo(data)
+    novo_jogo = adicionarJogo(data)
 
     if novo_jogo:
         return jsonify({"success": True, "message": "Jogo salvo!"})
@@ -113,3 +113,6 @@ def deletar_jogo(jogo_id):
         return jsonify({"success": True, "message": "Jogo deletado!"})
     
     return jsonify({"success": False, "message": "Jogo não encontrado."})
+
+if __name__ == '__main__':
+    app.run(debug=True)
