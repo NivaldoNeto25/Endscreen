@@ -1,43 +1,14 @@
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import os
-from sqlalchemy import *
-from sqlalchemy.orm import *
+
+from backend.db import atualizarJogo, criarUsuario, deletarJogo, encontrarJogoPorId, listarJogosDoUsuario, listarTodosJogos, loginUsuario, usuarioExiste
 
 PASTA_PROJETO = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
 app = Flask(__name__, static_folder=PASTA_PROJETO, static_url_path='')
 
 CORS(app)
-
-Base = declarative_base()
-
-engine = create_engine('sqlite:///endscreen.db')
-
-Session = sessionmaker(bind=engine)
-session = Session()
-
-class Usuario(Base):
-    __tablename__ = 'usuarios'
-    
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
-    email = Column(String)
-    password = Column(String)
-
-class Jogo(Base):
-    __tablename__ = 'jogos'
-
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
-    platform = Column(String)
-    rating = Column(String)
-    hours = Column(String)
-    review = Column(String)
-    user_id = Column(Integer)
-    userName = Column(String)
-
-Base.metadata.create_all(engine)
 
 @app.route('/')
 def index():
@@ -47,19 +18,12 @@ def index():
 def registrar():
     data = request.json
     
-    existing_user = session.query(Usuario).filter_by(email=data.get('email')).first()
+    existing_user = usuarioExiste(data)
     
     if existing_user:
         return jsonify({"success": False, "message": "Este e-mail já está em uso!"})
-   
-    novo_usuario = Usuario(
-        name = data.get('nome'),
-        email = data.get('email'),
-        password = data.get('senha')
-    )
-
-    session.add(novo_usuario)
-    session.commit()
+    
+    novo_usuario = criarUsuario(data)
     
     return jsonify({"success": True, "user": {"id": novo_usuario.id, "nome": novo_usuario.name}})
 
@@ -67,8 +31,8 @@ def registrar():
 def login():
     data = request.json
 
-    usuario = session.query(Usuario).filter_by(email=data.get('email'), password=data.get('senha')).first()
-    
+    usuario = loginUsuario(data)
+
     if usuario:
         return jsonify({"success": True, "user": {"id": usuario.id, "nome": usuario.name}})
 
@@ -78,24 +42,18 @@ def login():
 def adicionar_jogo():
     data = request.json
     
-    novo_jogo = Jogo(
-        name=data.get('name'),
-        platform=data.get('platform'),
-        rating=data.get('rating'),
-        hours=data.get('hours'),
-        review=data.get('review', ''),
-        user_id=data.get('userId'),
-        userName=data.get('userName')
-    )
+    novo_jogo = adicionar_jogo(data)
 
-    session.add(novo_jogo)
-    session.commit()
-
-    return jsonify({"success": True, "message": "Jogo salvo!"})
+    if novo_jogo:
+        return jsonify({"success": True, "message": "Jogo salvo!"})
+    
+    return jsonify({"success": False, "message": "Erro ao salvar jogo."})
 
 @app.route('/jogos/usuario/<int:user_id>', methods=['GET'])
 def listar_jogos_usuario(user_id):
-    jogos = session.query(Jogo).filter_by(user_id=user_id).all()
+
+    jogos = listarJogosDoUsuario(user_id)
+
     lista_jogos = []
 
     for jogo in jogos:
@@ -114,7 +72,9 @@ def listar_jogos_usuario(user_id):
 
 @app.route('/jogos', methods=['GET'])
 def listar_todos_jogos():
-    jogos = session.query(Jogo).all()
+
+    jogos = listarTodosJogos()
+    
     lista_jogos = []
 
     for jogo in jogos:
@@ -133,28 +93,23 @@ def listar_todos_jogos():
 
 @app.route('/jogos/<int:jogo_id>', methods=['PUT'])
 def atualizar_jogo(jogo_id):
-    data = request.json
-    jogo = session.query(Jogo).filter_by(id=jogo_id).first()
 
-    if jogo:
-        if 'name' in data: jogo.name = data['name']
-        if 'platform' in data: jogo.platform = data['platform']
-        if 'rating' in data: jogo.rating = data['rating']
-        if 'hours' in data: jogo.hours = data['hours']
-        if 'review' in data: jogo.review = data['review']
-    
-        session.commit()
+    data = request.json
+
+    sucesso = atualizarJogo(jogo_id, data)
+
+    if sucesso:
         return jsonify({"success": True, "message": "Jogo atualizado!"})
-    
+
     return jsonify({"success": False, "message": "Jogo não encontrado."})
+
 
 @app.route('/jogos/<int:jogo_id>', methods=['DELETE'])
 def deletar_jogo(jogo_id):
-    jogo = session.query(Jogo).filter_by(id=jogo_id).first()
 
-    if jogo:
-        session.delete(jogo)
-        session.commit()
+    sucesso = deletarJogo(jogo_id)
+
+    if sucesso:
         return jsonify({"success": True, "message": "Jogo deletado!"})
     
     return jsonify({"success": False, "message": "Jogo não encontrado."})
