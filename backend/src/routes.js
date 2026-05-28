@@ -11,7 +11,7 @@ import {
   listarTodosJogos,
   loginUsuario,
   usuarioExiste,
-} from "../db.js";
+} from "./db.js";
 
 const routes = express.Router();
 
