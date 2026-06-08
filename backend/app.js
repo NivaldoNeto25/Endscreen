@@ -11,8 +11,14 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const PASTA_PROJETO = path.join(__dirname, "..");
 
+function logMiddleware(req, res, next) {
+  console.log(`[MEU LOG] O usuário acessou a rota: ${req.method} ${req.url}`);
+  next();
+}
+
 app.use(cors());
-app.use(morgan("dev"))
+app.use(morgan("dev"));
+app.use(logMiddleware);
 
 app.use(express.static(PASTA_PROJETO));
 app.use(express.json());
