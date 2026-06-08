@@ -1,0 +1,36 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  engineType = "library"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./endscreen.db"
+}
+
+model Usuario {
+  id       Int    @id @default(autoincrement())
+  name     String
+  email    String @unique
+  password String
+  jogos    Jogo[] 
+}
+
+model Jogo {
+  id       Int     @id @default(autoincrement())
+  name     String
+  platform String
+  rating   String
+  hours    String
+  review   String? 
+  userName String
+
+  user_id  Int
+  dono     Usuario @relation(fields: [user_id], references: [id])
+}
