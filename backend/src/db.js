@@ -9,52 +9,92 @@ export const usuarioExiste = async (data) => {
 };
 
 export const criarUsuario = async (data) => {
-  return await prisma.usuario.create({
+  const usuario = await prisma.usuario.create({
     data: {
-      name: data.nome,
+      nome: data.nome,
       email: data.email,
-      password: data.senha,
+      senha: data.senha,
     },
   });
+  return { id: usuario.id, name: usuario.nome, email: usuario.email };
 };
 
 export const loginUsuario = async (data) => {
-  return await prisma.usuario.findFirst({
+  const usuario = await prisma.usuario.findFirst({
     where: {
       email: data.email,
-      password: data.senha,
+      senha: data.senha,
     },
   });
+
+  if (usuario) {
+    return { id: usuario.id, name: usuario.nome, email: usuario.email };
+  }
+  return null;
 };
 
 export const adicionarJogo = async (data) => {
   return await prisma.jogo.create({
     data: {
-      name: data.name,
-      platform: data.platform,
-      rating: data.rating,
-      hours: data.hours,
+      nome: data.name,
+      plataforma: data.platform,
+      nota: data.rating,
+      horas: data.hours,
       review: data.review || "",
-      user_id: parseInt(data.userId),
-      userName: data.userName,
+      usuarioId: parseInt(data.userId),
     },
   });
 };
 
 export const listarJogosDoUsuario = async (userId) => {
-  return await prisma.jogo.findMany({
-    where: { user_id: parseInt(userId) },
+  const jogos = await prisma.jogo.findMany({
+    where: { usuarioId: parseInt(userId) },
   });
+
+  return jogos.map((jogo) => ({
+    id: jogo.id,
+    name: jogo.nome,
+    platform: jogo.plataforma,
+    rating: jogo.nota,
+    hours: jogo.horas,
+    review: jogo.review,
+    userId: jogo.usuarioId,
+  }));
 };
 
 export const listarTodosJogos = async () => {
-  return await prisma.jogo.findMany();
+  const jogos = await prisma.jogo.findMany({
+    include: { usuario: true },
+  });
+
+  return jogos.map((jogo) => ({
+    id: jogo.id,
+    name: jogo.nome,
+    platform: jogo.plataforma,
+    rating: jogo.nota,
+    hours: jogo.horas,
+    review: jogo.review,
+    userId: jogo.usuarioId,
+    userName: jogo.usuario ? jogo.usuario.nome : "Usuário Desconhecido",
+  }));
 };
 
 export const encontrarJogoPorId = async (jogoId) => {
-  return await prisma.jogo.findUnique({
+  const jogo = await prisma.jogo.findUnique({
     where: { id: parseInt(jogoId) },
   });
+
+  if (!jogo) return null;
+
+  return {
+    id: jogo.id,
+    name: jogo.nome,
+    platform: jogo.plataforma,
+    rating: jogo.nota,
+    hours: jogo.horas,
+    review: jogo.review,
+    userId: jogo.usuarioId,
+  };
 };
 
 export const atualizarJogo = async (jogoId, data) => {
@@ -62,10 +102,10 @@ export const atualizarJogo = async (jogoId, data) => {
     await prisma.jogo.update({
       where: { id: parseInt(jogoId) },
       data: {
-        name: data.name,
-        platform: data.platform,
-        rating: data.rating,
-        hours: data.hours,
+        nome: data.name,
+        plataforma: data.platform,
+        nota: data.rating,
+        horas: data.hours,
         review: data.review,
       },
     });
