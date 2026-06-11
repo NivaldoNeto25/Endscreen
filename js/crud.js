@@ -6,9 +6,14 @@ function getCurrentUser() {
   return currentUser;
 }
 
+function getToken() {
+  return localStorage.getItem("token");
+}
+
 function logoutUser() {
   currentUser = null;
   localStorage.removeItem("currentUser");
+  localStorage.removeItem("token"); 
 }
 
 async function loginUser(email, password) {
@@ -23,6 +28,7 @@ async function loginUser(email, password) {
     if (data.success) {
       currentUser = data.user;
       localStorage.setItem("currentUser", JSON.stringify(currentUser));
+      localStorage.setItem("token", data.token); 
     }
     return data;
   } catch (error) {
@@ -43,6 +49,7 @@ async function registerUser(name, email, password) {
     if (data.success) {
       currentUser = data.user;
       localStorage.setItem("currentUser", JSON.stringify(currentUser));
+      localStorage.setItem("token", data.token); 
     }
     return data;
   } catch (error) {
@@ -53,13 +60,17 @@ async function registerUser(name, email, password) {
 
 async function createGame(gameData) {
   const user = getCurrentUser();
-  if (!user) return;
+  const token = getToken(); 
+  if (!user || !token) return;
 
   const payload = { ...gameData, userId: user.id, userName: user.nome };
   try {
     await fetch(`${API_URL}/jogos`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token 
+      },
       body: JSON.stringify(payload),
     });
   } catch (error) {
@@ -68,10 +79,14 @@ async function createGame(gameData) {
 }
 
 async function updateGame(id, gameData) {
+  const token = getToken(); 
   try {
     await fetch(`${API_URL}/jogos/${id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token 
+      },
       body: JSON.stringify(gameData),
     });
   } catch (error) {
@@ -80,9 +95,13 @@ async function updateGame(id, gameData) {
 }
 
 async function deleteGameData(id) {
+  const token = getToken(); 
   try {
     await fetch(`${API_URL}/jogos/${id}`, {
       method: "DELETE",
+      headers: {
+        "Authorization": "Bearer " + token 
+      }
     });
   } catch (error) {
     console.error("Erro ao deletar:", error);
