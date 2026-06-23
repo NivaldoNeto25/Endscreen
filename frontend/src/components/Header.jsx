@@ -1,13 +1,6 @@
 import "./Header.css";
 
-export function Header({ onOpenLogin, onOpenNewGame }) {
-  const handleNewGame = () => {
-    alert("Modal de novo jogo");
-  };
-
-  const handleLibrary = () => {
-    alert("Modal da biblioteca");
-  };
+export function Header({ onOpenLogin, onOpenNewGame, onOpenLibrary}) {
 
   return (
     <header>
@@ -19,10 +12,14 @@ export function Header({ onOpenLogin, onOpenNewGame }) {
           e.preventDefault(); 
           onOpenNewGame();
           }}>
-            
+
           Cadastrar
         </a>
-        <a href="#" onClick={handleLibrary}>
+        <a href="#" onClick={(e) => {
+          e.preventDefault(); 
+          onOpenLibrary();
+          }}>
+            
           Minha Lista
         </a>
         <a href="#" onClick={(e) => {
