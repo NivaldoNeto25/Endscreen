@@ -1,16 +1,16 @@
 import "./Hero.css";
 
-export function Hero() {
-  const handleNewGame = () => {
-    alert("Modal de novo jogo");
-  };
+export function Hero({ onOpenNewGame}) {
 
   return (
     <section className="hero">
       <div className="hero-content">
         <h1>A última tela do seu jogo.</h1>
         <p>Documente sua jornada, da primeira fase aos créditos finais.</p>
-        <a href="#" onClick={handleNewGame} className="btn-cta">
+        <a href="#" onClick={(e) => {
+          e.preventDefault;
+          onOpenNewGame();
+        }} className="btn-cta">
           Registrar Jogo
         </a>
       </div>
