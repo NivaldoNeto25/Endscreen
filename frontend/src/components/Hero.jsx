@@ -1,16 +1,55 @@
+import { useState, useEffect } from "react";
 import "./Hero.css";
 
-export function Hero({ onOpenNewGame}) {
+const heroBackgrounds = [
+  "linear-gradient(to bottom, rgba(18, 18, 18, 0.4), #121212), url('/img/pragmata.jpg')",
+  "linear-gradient(to bottom, rgba(18, 18, 18, 0.4), #121212), url('/img/eldenring.jpeg')",
+  "linear-gradient(to bottom, rgba(18, 18, 18, 0.4), #121212), url('/img/sekiro.jpg')",
+  "linear-gradient(to bottom, rgba(18, 18, 18, 0.4), #121212), url('/img/tlou.jpg')",
+  "linear-gradient(to bottom, rgba(18, 18, 18, 0.4), #121212), url('/img/cyberpunk.jpg')",
+  "linear-gradient(to bottom, rgba(18, 18, 18, 0.4), #121212), url('/img/bf1.png')",
+  "linear-gradient(to bottom, rgba(18, 18, 18, 0.4), #121212), url('/img/destiny2.jpg')",
+  "linear-gradient(to bottom, rgba(18, 18, 18, 0.4), #121212), url('/img/minecraft.png')",
+  "linear-gradient(to bottom, rgba(18, 18, 18, 0.4), #121212), url('/img/overwatch.png')",
+  "linear-gradient(to bottom, rgba(18, 18, 18, 0.4), #121212), url('/img/rdr2.png')",
+  "linear-gradient(to bottom, rgba(18, 18, 18, 0.4), #121212), url('/img/skyrim.jpg')",
+  "linear-gradient(to bottom, rgba(18, 18, 18, 0.4), #121212), url('/img/spiderman2.jpeg')",
+  "linear-gradient(to bottom, rgba(18, 18, 18, 0.4), #121212), url('/img/thewitcher.jpg')",
+];
+
+export function Hero({ onOpenNewGame }) {
+  const [currentBgIndex, setCurrentBgIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentBgIndex(
+        (prevIndex) => (prevIndex + 1) % heroBackgrounds.length,
+      );
+    }, 8000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <section className="hero">
+      {heroBackgrounds.map((bg, index) => (
+        <div
+          key={index}
+          className={`hero-bg-layer ${index === currentBgIndex ? "active" : ""}`}
+          style={{ backgroundImage: bg }}
+        />
+      ))}
+
       <div className="hero-content">
         <h1>A última tela do seu jogo.</h1>
         <p>Documente sua jornada, da primeira fase aos créditos finais.</p>
-        <a href="#" onClick={(e) => {
-          e.preventDefault;
-          onOpenNewGame();
-        }} className="btn-cta">
+        <a
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            onOpenNewGame();
+          }}
+          className="btn-cta"
+        >
           Registrar Jogo
         </a>
       </div>
