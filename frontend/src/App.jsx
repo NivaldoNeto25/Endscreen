@@ -5,6 +5,8 @@ import { AuthModal } from "./components/AuthModal";
 import { GameModal } from "./components/GameModal";
 import { LibraryModal } from "./components/LibraryModal";
 import { useState } from "react";
+import { Footer } from "./components/Footer";
+import { Reviews } from "./components/Reviews";
 
 function App() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -13,32 +15,33 @@ function App() {
 
   return (
     <>
-      <Header 
-      onOpenLogin={() => setIsAuthModalOpen(true)} 
-      onOpenNewGame={() => setIsGameModalOpen(true)}
-      onOpenLibrary={() => setIsLibraryModalOpen(true)}
+      <Header
+        onOpenLogin={() => setIsAuthModalOpen(true)}
+        onOpenNewGame={() => setIsGameModalOpen(true)}
+        onOpenLibrary={() => setIsLibraryModalOpen(true)}
       />
       <main>
-        <Hero onOpenNewGame={() => setIsGameModalOpen(true)}/>
+        <Hero onOpenNewGame={() => setIsGameModalOpen(true)} />
+        <Reviews />
       </main>
 
-      <AuthModal 
-        isOpen={isAuthModalOpen} 
-        onClose={() => setIsAuthModalOpen(false)} 
+      <Footer />
+
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
       />
 
-      <GameModal 
-        isOpen={isGameModalOpen} 
-        onClose={() => setIsGameModalOpen(false)} 
+      <GameModal
+        isOpen={isGameModalOpen}
+        onClose={() => setIsGameModalOpen(false)}
       />
 
-      <LibraryModal 
-        isOpen={isLibraryModalOpen} 
-        onClose={() => setIsLibraryModalOpen(false)} 
+      <LibraryModal
+        isOpen={isLibraryModalOpen}
+        onClose={() => setIsLibraryModalOpen(false)}
       />
     </>
-
-
   );
 }
 
