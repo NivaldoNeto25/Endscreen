@@ -6,7 +6,6 @@ const heroBackgrounds = [
   "linear-gradient(to bottom, rgba(18, 18, 18, 0.4), #121212), url('/img/eldenring.jpeg')",
   "linear-gradient(to bottom, rgba(18, 18, 18, 0.4), #121212), url('/img/sekiro.jpg')",
   "linear-gradient(to bottom, rgba(18, 18, 18, 0.4), #121212), url('/img/tlou.jpg')",
-  "linear-gradient(to bottom, rgba(18, 18, 18, 0.4), #121212), url('/img/cyberpunk.jpg')",
   "linear-gradient(to bottom, rgba(18, 18, 18, 0.4), #121212), url('/img/bf1.png')",
   "linear-gradient(to bottom, rgba(18, 18, 18, 0.4), #121212), url('/img/destiny2.jpg')",
   "linear-gradient(to bottom, rgba(18, 18, 18, 0.4), #121212), url('/img/minecraft.png')",
