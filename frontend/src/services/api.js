@@ -61,11 +61,12 @@ async function registerUser(name, email, password) {
 async function createGame(gameData) {
   const user = getCurrentUser();
   const token = getToken(); 
-  if (!user || !token) return;
+  
+  if (!user || !token) return { success: false, message: "Usuário não logado" };
 
   const payload = { ...gameData, userId: user.id, userName: user.nome };
   try {
-    await fetch(`${API_URL}/jogos`, {
+    const response = await fetch(`${API_URL}/jogos`, {
       method: "POST",
       headers: { 
         "Content-Type": "application/json",
@@ -73,8 +74,11 @@ async function createGame(gameData) {
       },
       body: JSON.stringify(payload),
     });
+    return await response.json(); 
+    
   } catch (error) {
     console.error("Erro ao salvar:", error);
+    return { success: false, message: "Erro de conexão." };
   }
 }
 

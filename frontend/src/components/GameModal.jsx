@@ -9,11 +9,15 @@ export function GameModal({ isOpen, onClose }) {
   const [hours, setHours] = useState('');
   const [review, setReview] = useState('');
 
+  const [isSaving, setIsSaving] = useState(false);
+
   if (!isOpen) return null;
 
   // Conectando ao banco de dados
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if( isSaving ) return;
     
     const user = getCurrentUser();
     if (!user) {
@@ -21,6 +25,8 @@ export function GameModal({ isOpen, onClose }) {
       onClose();
       return;
     }
+
+    setIsSaving(true);
 
     const gameData = {name, platform, rating, hours, review };
 
@@ -35,8 +41,12 @@ export function GameModal({ isOpen, onClose }) {
       setHours('');
       setReview('');
       onClose();
+
+      window.location.reload();
     } else {
       alert("Erro ao salvar o jogo. Tente novamente");
+
+      setIsSaving(false);
     }
   };
 
@@ -148,7 +158,12 @@ export function GameModal({ isOpen, onClose }) {
               ></textarea>
             </div>
 
-            <button type="submit" className="btn-submit">Salvar Jogo</button>
+            <button 
+            type="submit" 
+            className="btn-submit"
+            disabled = {isSaving} 
+            style={{ opacity: isSaving ? 0.7 : 1, cursor: isSaving ? 'not-allowed' : 'pointer' }}>
+              {isSaving ? 'Salvando...' : 'Salvar Jogo'}</button>
           </form>
         </section>
       </div>
