@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { getAllReviews } from "../services/api";
 import "./Reviews.css";
 
-export function Reviews() {
+export function Reviews({ refreshTrigger }) {
   const [reviews, setReviews] = useState([]);
 
   // executa toda vez que recarregar a página
@@ -12,9 +12,9 @@ export function Reviews() {
       // mostra as 5 últimas reviews
       setReviews(data.slice(0, 5));
     }
-    
+
     fetchReviews();
-  }, []);
+  }, [refreshTrigger]);
 
   return (
     <section className="reviews-section">
