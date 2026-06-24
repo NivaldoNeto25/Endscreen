@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { loginUser, registerUser } from '../services/api';
 import './AuthModal.css';
 
 export function AuthModal({ isOpen, onClose }) {
@@ -20,11 +21,23 @@ export function AuthModal({ isOpen, onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // conectar com o banco de dados depois
+    // Conexão com o banco de dados
     if (isLoginMode) {
-      console.log("Tentando logar com:", { email, senha });
+      const result = await loginUser(email, senha);
+      if(result.success){
+        alert(`Bem-vindo, ${result.user.nome}!`);
+        onClose();
+      } else {
+        alert(result.message);
+      }
     } else {
-      console.log("Tentando registrar com:", { nome, email, senha });
+      const result = await registerUser(nome, email, senha);
+      if (result.success) {
+        alert("Conta criada com sucesso")
+        onClose();
+      } else {
+        alert(result.message)
+      }
     }
   };
 

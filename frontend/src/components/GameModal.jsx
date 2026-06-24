@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createGame, getCurrentUser } from '../services/api';
 import './AuthModal.css'; 
 
 export function GameModal({ isOpen, onClose }) {
@@ -10,19 +11,33 @@ export function GameModal({ isOpen, onClose }) {
 
   if (!isOpen) return null;
 
+  // Conectando ao banco de dados
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    const gameData = { name, platform, rating, hours, review };
-    console.log("Tentando registar jogo:", gameData);
-    
-    // Limpa o formulário após submeter
-    setName('');
-    setPlatform('');
-    setRating('');
-    setHours('');
-    setReview('');
-    onClose();
+    const user = getCurrentUser();
+    if (!user) {
+      alert("Você precisa fazer login para cadastrar um jogo")
+      onClose();
+      return;
+    }
+
+    const gameData = {name, platform, rating, hours, review };
+
+    const result = await createGame(gameData);
+
+    if(result.success) {
+      alert("Jogo salvo com sucesso");
+
+      setName('');
+      setPlatform('');
+      setRating('');
+      setHours('');
+      setReview('');
+      onClose();
+    } else {
+      alert("Erro ao salvar o jogo. Tente novamente");
+    }
   };
 
   return (
