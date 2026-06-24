@@ -1,6 +1,17 @@
 import "./Header.css";
 
-export function Header({ onOpenLogin, onOpenNewGame, onOpenLibrary}) {
+export function Header({
+  user,
+  setUser,
+  onOpenLogin,
+  onOpenNewGame,
+  onOpenLibrary,
+}) {
+  const handleLogout = () => {
+    localStorage.removeItem("currentUser");
+    localStorage.removeItem("token");
+    setUser(null);
+  };
 
   return (
     <header>
@@ -8,27 +19,48 @@ export function Header({ onOpenLogin, onOpenNewGame, onOpenLibrary}) {
         END<span>SCREEN</span>
       </div>
       <nav>
-        <a href="#" onClick={(e) => {
-          e.preventDefault(); 
-          onOpenNewGame();
-          }}>
-
+        <a
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            onOpenNewGame();
+          }}
+        >
           Cadastrar
         </a>
-        <a href="#" onClick={(e) => {
-          e.preventDefault(); 
-          onOpenLibrary();
-          }}>
-            
+        <a
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            onOpenLibrary();
+          }}
+        >
           Minha Lista
         </a>
-        <a href="#" onClick={(e) => {
-          e.preventDefault();
-          onOpenLogin();
-        }}
-        className="nav-login">
-          Login
-        </a>
+
+        {user ? (
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              handleLogout();
+            }}
+            className="nav-login"
+          >
+            Sair ({user.nome})
+          </a>
+        ) : (
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              onOpenLogin();
+            }}
+            className="nav-login"
+          >
+            Login
+          </a>
+        )}
       </nav>
     </header>
   );

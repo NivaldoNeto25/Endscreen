@@ -1,13 +1,22 @@
-import { useState } from 'react';
-import { loginUser, registerUser } from '../services/api';
-import './AuthModal.css';
+import { useState, useEffect } from "react";
+import { loginUser, registerUser } from "../services/api";
+import "./AuthModal.css";
 
-export function AuthModal({ isOpen, onClose }) {
+export function AuthModal({ isOpen, onClose, onLoginSuccess }) {
   // Controle de estados para os inputs e modo da tela
   const [isLoginMode, setIsLoginMode] = useState(true);
-  const [nome, setNome] = useState('');
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+
+  useEffect(() => {
+    if (!isOpen) {
+      setNome("");
+      setEmail("");
+      setSenha("");
+      setIsLoginMode(true);
+    }
+  }, [isOpen]);
 
   // Se o modal não estiver aberto, não renderiza nada
   if (!isOpen) return null;
@@ -15,17 +24,18 @@ export function AuthModal({ isOpen, onClose }) {
   // Alterna entre Login e Criar Conta limpando o campo de nome
   const toggleMode = () => {
     setIsLoginMode(!isLoginMode);
-    setNome(''); 
+    setNome("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Conexão com o banco de dados
     if (isLoginMode) {
       const result = await loginUser(email, senha);
-      if(result.success){
+      if (result.success) {
         alert(`Bem-vindo, ${result.user.nome}!`);
+        onLoginSuccess(result.user);
         onClose();
       } else {
         alert(result.message);
@@ -33,10 +43,11 @@ export function AuthModal({ isOpen, onClose }) {
     } else {
       const result = await registerUser(nome, email, senha);
       if (result.success) {
-        alert("Conta criada com sucesso")
+        alert("Conta criada com sucesso");
+        onLoginSuccess(result.user);
         onClose();
       } else {
-        alert(result.message)
+        alert(result.message);
       }
     }
   };
@@ -46,13 +57,14 @@ export function AuthModal({ isOpen, onClose }) {
     <div className="modal-overlay active" onClick={onClose}>
       {/* O stopPropagation impede que clicar dentro da caixa feche o modal */}
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <span className="close-btn" onClick={onClose}>&times;</span>
-        
+        <span className="close-btn" onClick={onClose}>
+          &times;
+        </span>
+
         <section className="container-modal">
-          <h2 id="auth-title">{isLoginMode ? 'Login' : 'Criar Conta'}</h2>
+          <h2 id="auth-title">{isLoginMode ? "Login" : "Criar Conta"}</h2>
 
           <form id="auth-form" onSubmit={handleSubmit}>
-            
             {/* O campo Nome só aparece se NÃO estiver no modo de login */}
             {!isLoginMode && (
               <div className="form-group">
@@ -93,12 +105,20 @@ export function AuthModal({ isOpen, onClose }) {
             </div>
 
             <button type="submit" className="btn-submit">
-              {isLoginMode ? 'Entrar' : 'Cadastrar'}
+              {isLoginMode ? "Entrar" : "Cadastrar"}
             </button>
 
             <p className="toggle-text">
-              <a href="#" onClick={(e) => { e.preventDefault(); toggleMode(); }}>
-                {isLoginMode ? 'Não tem conta? Registre-se' : 'Já tem conta? Faça Login'}
+              <a
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  toggleMode();
+                }}
+              >
+                {isLoginMode
+                  ? "Não tem conta? Registre-se"
+                  : "Já tem conta? Faça Login"}
               </a>
             </p>
           </form>
