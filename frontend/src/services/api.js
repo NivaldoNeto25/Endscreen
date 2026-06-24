@@ -1,9 +1,7 @@
 const API_URL = "http://127.0.0.1:5000";
 
-let currentUser = JSON.parse(localStorage.getItem("currentUser")) || null;
-
 function getCurrentUser() {
-  return currentUser;
+  return JSON.parse(localStorage.getItem("currentUser"));
 }
 
 function getToken() {
@@ -11,9 +9,8 @@ function getToken() {
 }
 
 function logoutUser() {
-  currentUser = null;
   localStorage.removeItem("currentUser");
-  localStorage.removeItem("token"); 
+  localStorage.removeItem("token");
 }
 
 async function loginUser(email, password) {
@@ -26,9 +23,8 @@ async function loginUser(email, password) {
     const data = await response.json();
 
     if (data.success) {
-      currentUser = data.user;
-      localStorage.setItem("currentUser", JSON.stringify(currentUser));
-      localStorage.setItem("token", data.token); 
+      localStorage.setItem("currentUser", JSON.stringify(data.user));
+      localStorage.setItem("token", data.token);
     }
     return data;
   } catch (error) {
@@ -47,9 +43,8 @@ async function registerUser(name, email, password) {
     const data = await response.json();
 
     if (data.success) {
-      currentUser = data.user;
-      localStorage.setItem("currentUser", JSON.stringify(currentUser));
-      localStorage.setItem("token", data.token); 
+      localStorage.setItem("currentUser", JSON.stringify(data.user));
+      localStorage.setItem("token", data.token);
     }
     return data;
   } catch (error) {
@@ -60,55 +55,63 @@ async function registerUser(name, email, password) {
 
 async function createGame(gameData) {
   const user = getCurrentUser();
-  const token = getToken(); 
-  
-  if (!user || !token) return { success: false, message: "Usuário não logado" };
+  const token = getToken();
+
+  if (!user || !token) throw new Error("Usuário não logado");
 
   const payload = { ...gameData, userId: user.id, userName: user.nome };
   try {
     const response = await fetch(`${API_URL}/jogos`, {
       method: "POST",
-      headers: { 
+      headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer " + token 
+        Authorization: "Bearer " + token,
       },
       body: JSON.stringify(payload),
     });
-    return await response.json(); 
-    
+
+    if (!response.ok) throw new Error("Falha ao salvar no banco de dados.");
+
+    return await response.json();
   } catch (error) {
     console.error("Erro ao salvar:", error);
-    return { success: false, message: "Erro de conexão." };
+    throw error;
   }
 }
 
 async function updateGame(id, gameData) {
-  const token = getToken(); 
+  const token = getToken();
   try {
-    await fetch(`${API_URL}/jogos/${id}`, {
+    const response = await fetch(`${API_URL}/jogos/${id}`, {
       method: "PUT",
-      headers: { 
+      headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer " + token 
+        Authorization: "Bearer " + token,
       },
       body: JSON.stringify(gameData),
     });
+
+    if (!response.ok) throw new Error("Falha ao atualizar.");
   } catch (error) {
     console.error("Erro ao atualizar:", error);
+    throw error;
   }
 }
 
 async function deleteGameData(id) {
-  const token = getToken(); 
+  const token = getToken();
   try {
-    await fetch(`${API_URL}/jogos/${id}`, {
+    const response = await fetch(`${API_URL}/jogos/${id}`, {
       method: "DELETE",
       headers: {
-        "Authorization": "Bearer " + token 
-      }
+        Authorization: "Bearer " + token,
+      },
     });
+
+    if (!response.ok) throw new Error("Falha ao deletar.");
   } catch (error) {
     console.error("Erro ao deletar:", error);
+    throw error;
   }
 }
 
@@ -118,6 +121,7 @@ async function getUserGames() {
 
   try {
     const response = await fetch(`${API_URL}/jogos/usuario/${user.id}`);
+    if (!response.ok) throw new Error("Falha ao buscar jogos.");
     return await response.json();
   } catch (error) {
     console.error("Erro ao buscar jogos:", error);
@@ -128,6 +132,7 @@ async function getUserGames() {
 async function getAllReviews() {
   try {
     const response = await fetch(`${API_URL}/jogos`);
+    if (!response.ok) throw new Error("Falha ao buscar reviews.");
     const allGames = await response.json();
     return allGames
       .filter((game) => game.review && game.review.trim() !== "")
@@ -143,7 +148,16 @@ async function getGameById(id) {
   return games.find((game) => game.id === id);
 }
 
-export {getCurrentUser, getAllReviews, getGameById, 
-    getToken, getUserGames ,loginUser, 
-    logoutUser, registerUser, createGame, 
-    updateGame, deleteGameData};
+export {
+  getCurrentUser,
+  getAllReviews,
+  getGameById,
+  getToken,
+  getUserGames,
+  loginUser,
+  logoutUser,
+  registerUser,
+  createGame,
+  updateGame,
+  deleteGameData,
+};
