@@ -1,0 +1,45 @@
+header {
+  background-color: transparent;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  padding: 20px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -0.5px;
+  text-transform: uppercase;
+}
+
+.logo span {
+  color: #00e054;
+  margin-left: 0;
+}
+
+nav a {
+  color: #fff;
+  text-decoration: none;
+  margin-left: 20px;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+.nav-login {
+  background-color: #333;
+  padding: 8px 15px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.nav-login:hover {
+  background-color: #00e054;
+  color: #121212;
+}
